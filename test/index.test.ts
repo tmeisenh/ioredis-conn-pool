@@ -1,6 +1,7 @@
-'use strict';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
-const { RedisPool } = require('../index');
+import { RedisPool } from '../src/index';
+
 
 describe('测试 ioredis-conn-pool', () => {
   let pool;
@@ -9,13 +10,15 @@ describe('测试 ioredis-conn-pool', () => {
   beforeAll(() => {
     pool = new RedisPool({
       redis: {
-        sentinels: [{
-          host: '10.59.44.155',
-          port: 26379
-        }],
+        // sentinels: [{
+        //   host: 'localhost',
+        //   port: 26379
+        // }],
+        host: '127.0.0.1', // Redis host
+        port: 6379, // Redis port
         name: 'test',
         password: 'B213547b69b13224',
-        keyPrefix: 'talos_open_'
+        keyPrefix: 'test_'
       },
       pool: {
         // 默认最小连接数为2，最大连接数为10，根据实际需要设置

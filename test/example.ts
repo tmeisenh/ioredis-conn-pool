@@ -1,54 +1,31 @@
-'use strict';
+import { ConsoleAppender, Logger } from 'base-log-factory';
 
-const Logger = require('clrsole');
-const { RedisPool } = require('../index');
+import { RedisPool } from '../src/index';
 
-const logger = new Logger('example');
+const logger = new Logger('example', { level: 'DEBUG', appenders: [new ConsoleAppender()] });
 
 const pool = new RedisPool({
   redis: {
-    sentinels: [{
-      host: '10.59.44.155',
-      port: 26379
-    }],
+    // sentinels: [{
+    //   host: 'localhost',
+    //   port: 26379
+    // }],
+    host: '127.0.0.1', // Redis host
+    port: 6379, // Redis port
     name: 'test',
     password: 'B213547b69b13224',
-    keyPrefix: 'talos_open_'
+    keyPrefix: 'test_'
   },
   pool: {
-    // 默认最小连接数为2，最大连接数为10，根据实际需要设置
+    // Set the pool's size
     min: 2,
     max: 10
   }
 });
 
-pool
-  .on('connect', () => {
-    logger.info('connecting');
-  })
-  .on('ready', () => {
-    logger.info('connected');
-  })
-  .on('error', (e) => {
-    logger.error('error', e);
-  })
-  .on('close', () => {
-    logger.info('close');
-  })
-  .on('disconnected', () => {
-    logger.info('disconnected');
-  })
-  .on('reconnecting', () => {
-    logger.info('reconnecting');
-  })
-  .on('end', () => {
-    logger.info('closed all');
-  });
-
 async function todo() {
   let client;
   try {
-
     // get a connection for redis
     client = await pool.getConnection();
 
@@ -62,20 +39,17 @@ async function todo() {
     // delete something from redis
     client.del('test');
     logger.info('deleted successfully', result);
-
-  } catch (e) {
-
+  }
+  catch (e) {
     // caught an error
-    console.error(e);
-
-  } finally {
-
+    logger.error(e);
+  }
+  finally {
     // finally release redis client to pool
     if (client) {
       await pool.release(client);
       logger.info('released');
     }
-
   }
 
   // close connection with redis
@@ -83,4 +57,6 @@ async function todo() {
   logger.info('closed all connections');
 }
 
-todo();
+todo().finally(() => {
+  process.exit(0);
+});
