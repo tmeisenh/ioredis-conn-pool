@@ -1,7 +1,7 @@
 {
   "name": "ioredis-conn-pool",
   "description": "A Redis connection pool implementation based on `ioredis` and `generic-pool`, designed to simplify the management of Redis client connections in Node.js applications.",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "types": "dist/index.d.ts",
   "module": "dist/index.mjs",
   "main": "dist/index.js",
@@ -33,7 +33,8 @@
     "eslint": "eslint --ext .js,.mjs,.jsx,.ts,.tsx --fix --ignore-path .eslintignore ./",
     "preview": "vite preview",
     "test": "vitest run --coverage",
-    "example": "vite-node ./test/example.ts"
+    "example": "vite-node ./test/example.ts",
+    "prepublishOnly": "npm run build"
   },
   "files": [
     "dist"
